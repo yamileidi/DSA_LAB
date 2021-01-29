@@ -1,0 +1,7 @@
+{
+  "name": "DSA_LAB",
+  "dependencies": {
+    "express": "^4.17.1",
+    "zeromq": "^6.0.0-beta.6"
+  }
+}
