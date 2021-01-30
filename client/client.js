@@ -1,6 +1,6 @@
-const zmq = require("zeromq");
+const zmq = require("zeromq/v5-compat");
 const app = require("express")();
-let sock = new zmq.Request();
+let sock = zmq.socket("req");
 
 async function run() {
   var responses = {};
@@ -14,14 +14,15 @@ async function run() {
     };
     responses[msgId] = res;
     sock.send(JSON.stringify(data));
-    sock.receive().then(function (data) {
-      console.log(data.toString());
-      data = JSON.parse(data.toString());
-      const msgId = data.id;
-      const res = responses[msgId];
-      delete responses[msgId];
-      res.send(data.message);
-    });
+  });
+
+  sock.on("message", function (data) {
+    console.log(data.toString());
+    data = JSON.parse(data.toString());
+    const msgId = data.id;
+    const res = responses[msgId];
+    delete responses[msgId];
+    res.send(data.message);
   });
 
   app.listen(3000, "0.0.0.0", () => {

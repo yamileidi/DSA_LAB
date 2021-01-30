@@ -20,6 +20,7 @@ sc.on("message", (c, sep, m) => {
 sw.on("message", (w, sep, c, sep2, r) => {
   if (c == "") {
     workers.push(w);
+    console.log(`worker ${w} added`);
     return;
   }
   if (cli.length > 0) {
