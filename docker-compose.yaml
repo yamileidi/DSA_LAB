@@ -1,11 +1,19 @@
 version: "3.3"
 services:
+  lbq:
+    build: ./lbq
+    ports:
+      - "9996:9996"
+      - "9997:9997"
   queue:
     build: ./queue
     ports:
-      # - "9997:9997"
-      - "9998:9998"
-      - "9999:9999"
+      - "9996"
+      - "9997"
+      - "9998"
+      - "9999"
+    depends_on:
+      - lbq
   client:
     build: ./client
     ports:

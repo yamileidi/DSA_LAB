@@ -5,6 +5,8 @@ let sock = zmq.socket("req");
 async function run() {
   var responses = {};
   sock.connect("tcp://queue:9998");
+  sock.connect("tcp://queue:9998");
+  sock.connect("tcp://queue:9998");
 
   app.get("/job/:number", function (req, res) {
     console.log("Received Request");
