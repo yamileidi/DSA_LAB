@@ -1,14 +1,8 @@
-var zmq = require("zeromq"),
-  sock = new zmq.Reply();
-
-async function run() {
-  await sock.bind("tcp://127.0.0.1:9998");
-  console.log("Server Listening");
-  while (true) {
-    const [msg] = await sock.receive();
-    sock.send(msg);
-    console.log(msg.toString());
-  }
-}
-
-run();
+const zmq = require("zeromq/v5-compat");
+let req = zmq.socket("req");
+req.identity = "Worker1" + process.pid;
+req.connect("tcp://localhost:9999");
+req.on("message", (c, sep, msg) => {
+  req.send([c, "", msg]);
+});
+req.send(["", "", ""]);

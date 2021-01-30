@@ -8,10 +8,12 @@ async function run() {
 
   app.get("/job/:number", function (req, res) {
     const msgId = Math.random().toString(36).substring(7);
-    const data = { id: msgId, message: req.params.number };
+    const data = {
+      id: msgId,
+      message: req.params.number,
+    };
     responses[msgId] = res;
     sock.send(JSON.stringify(data));
-
     sock.receive().then(function (data) {
       console.log(data.toString());
       data = JSON.parse(data.toString());
