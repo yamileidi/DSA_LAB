@@ -1,0 +1,21 @@
+version: "3.3"
+services:
+  queue:
+    build: ./queue
+    ports:
+      # - "9997:9997"
+      - "9998:9998"
+      - "9999:9999"
+  client:
+    build: ./client
+    ports:
+      - "9998"
+      - "3000:3000"
+    depends_on:
+      - queue
+  worker:
+    build: ./worker
+    ports:
+      - "9999"
+    depends_on:
+      - queue

@@ -4,9 +4,10 @@ let sock = zmq.socket("req");
 
 async function run() {
   var responses = {};
-  sock.connect("tcp://localhost:9998");
+  sock.connect("tcp://queue:9998");
 
   app.get("/job/:number", function (req, res) {
+    console.log("Received Request");
     const msgId = Math.random().toString(36).substring(7);
     const data = {
       id: msgId,
@@ -14,6 +15,10 @@ async function run() {
     };
     responses[msgId] = res;
     sock.send(JSON.stringify(data));
+  });
+
+  app.get("/alive", function (req, res) {
+    res.send(true);
   });
 
   sock.on("message", function (data) {
