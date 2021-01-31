@@ -28,9 +28,7 @@ async function run() {
   results.on("message", function (topic, data) {
     console.log(data.toString());
     const { m } = JSON.parse(data.toString());
-    console.log(`m: ${m}`);
     const { id, message } = JSON.parse(m);
-    console.log(id, message);
     if (responses[id]) {
       const res = responses[id];
       res.send(message);
