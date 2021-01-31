@@ -1,12 +1,14 @@
 const zmq = require("zeromq/v5-compat");
 const app = require("express")();
-let sock = zmq.socket("req");
+let sock = zmq.socket("push");
+let results = zmq.socket("sub");
 
 async function run() {
+  const clientId = Math.random().toString(36).substring(7);
   var responses = {};
-  sock.connect("tcp://queue:9998");
-  sock.connect("tcp://queue:9998");
-  sock.connect("tcp://queue:9998");
+  results.connect("tcp://lbq:9996");
+  results.subscribe("results");
+  sock.connect("tcp://lbq:9997");
 
   app.get("/job/:number", function (req, res) {
     console.log("Received Request");
@@ -16,20 +18,24 @@ async function run() {
       message: req.params.number,
     };
     responses[msgId] = res;
-    sock.send(JSON.stringify(data));
+    sock.send([clientId, JSON.stringify(data)]);
   });
 
   app.get("/alive", function (req, res) {
     res.send(true);
   });
 
-  sock.on("message", function (data) {
+  results.on("message", function (topic, data) {
     console.log(data.toString());
-    data = JSON.parse(data.toString());
-    const msgId = data.id;
-    const res = responses[msgId];
-    delete responses[msgId];
-    res.send(data.message);
+    const { m } = JSON.parse(data.toString());
+    console.log(`m: ${m}`);
+    const { id, message } = JSON.parse(m);
+    console.log(id, message);
+    if (responses[id]) {
+      const res = responses[id];
+      res.send(message);
+      delete responses[id];
+    }
   });
 
   app.listen(3000, "0.0.0.0", () => {

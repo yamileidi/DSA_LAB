@@ -7,8 +7,14 @@ lbqrec.bind(`tcp://*:9997`);
 lbqsend.bind(`tcp://*:9996`);
 
 lbqrec.on("message", (c, m) => {
-  console.log("Message received from a queue");
-  console.log(c.toString());
-  console.log(m.toString());
-  lbqsend.send(["work", JSON.stringify({ c: c.toString(), m: m.toString() })]);
+  if (c.toString() === "results") {
+    console.log(`Results ${m} received`);
+    lbqsend.send(["results", JSON.stringify({ m: m.toString() })]);
+  } else {
+    console.log(`Work from ${c.toString()} received`);
+    lbqsend.send([
+      "work",
+      JSON.stringify({ c: c.toString(), m: m.toString() }),
+    ]);
+  }
 });

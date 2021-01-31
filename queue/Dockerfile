@@ -4,6 +4,5 @@ COPY . .
 RUN npm install
 EXPOSE 9996/tcp
 EXPOSE 9997/tcp
-EXPOSE 9998/tcp
 EXPOSE 9999/tcp
 CMD [ "node", "queue.js" ]
